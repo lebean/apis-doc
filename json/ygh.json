@@ -1,0 +1,551 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "预规划子系统API设计文档",
+    "termsOfService": "http://www.esrichina.com.cn/",
+    "contact": {
+      "email": "xulei@esrichina.com.cn"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "zhhb.arcgisonline.cn",
+  "basePath": "/ygh/apis",
+  "tags": [
+    {
+      "name": "user",
+      "description": "操作用户的接口"
+    },
+    {
+      "name": "land",
+      "description": "操作用地汇总的接口"
+    },
+    {
+      "name": "plan",
+      "description": "操作规划业务的接口"
+    },
+    {
+      "name": "building",
+      "description": "操作建筑物的接口"
+    }
+  ],
+  "paths": {
+    "/users/auth": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "账号登录",
+        "operationId": "login",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "account",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Account"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "登录认证通，返回token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "409": {
+            "description": "认证失败，用户名或密码错误"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "退出登录",
+        "description": "",
+        "operationId": "logout",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        }
+      }
+    },
+    "/comprehensive-plans": {
+      "get": {
+        "tags": [
+          "plan"
+        ],
+        "summary": "总体规划基础信息查询",
+        "description": "",
+        "operationId": "queryComprehensivePlan",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功退出登录",
+            "schema": {
+              "$ref": "#/definitions/ComprehensivePlan"
+            }
+          }
+        }
+      }
+    },
+    "/regulatory-plans": {
+      "get": {
+        "tags": [
+          "plan"
+        ],
+        "summary": "控规地块列表查询",
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "检索关键词",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "查询分页，查询第几页，从1开始，小于1返回所有数据",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "分页大小，默认为10",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TotalRegulatoryPlan"
+            }
+          }
+        }
+      }
+    },
+    "/regulatory-plans/{id}": {
+      "get": {
+        "tags": [
+          "plan"
+        ],
+        "summary": "控规地块详情查询",
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "控规地块唯一标识",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RegulatoryPlan"
+            }
+          }
+        }
+      }
+    },
+    "/regulatory-plan-cells": {
+      "get": {
+        "tags": [
+          "plan"
+        ],
+        "summary": "控规单元列表查询",
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "检索关键词",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "查询分页，查询第几页，从1开始，小于1返回所有数据",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "分页大小，默认为10",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TotalRegulatoryPlanCell"
+            }
+          }
+        }
+      }
+    },
+    "/lands": {
+      "get": {
+        "tags": [
+          "land"
+        ],
+        "summary": "查询用地面积",
+        "description": "",
+        "operationId": "queryLandAreas",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LandArea"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lands/excels": {
+      "get": {
+        "tags": [
+          "land"
+        ],
+        "summary": "导出用地面积统计结果为Excel",
+        "description": "",
+        "operationId": "exportLandAreasExcel",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        }
+      }
+    },
+    "/buildings/{id}": {
+      "get": {
+        "tags": [
+          "building"
+        ],
+        "summary": "建筑信息查询",
+        "description": "",
+        "operationId": "queryBuildingInfo",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "建筑物唯一标识",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/BuildingInfo"
+            }
+          }
+        }
+      }
+    },
+    "/buildings": {
+      "get": {
+        "tags": [
+          "building"
+        ],
+        "summary": "建筑信息查询",
+        "description": "",
+        "operationId": "queryBuildings",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "登录成功获得的token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "检索关键词",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "分页页数",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "分页大小",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/TotalBuilding"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TotalBuilding": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "description": "一共有多少条数据"
+        },
+        "list": {
+          "type": "array",
+          "description": "返回的数据列表",
+          "items": {
+            "$ref": "#/definitions/Building"
+          }
+        }
+      }
+    },
+    "Building": {
+      "description": "建筑基础信息",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "编号"
+        },
+        "name": {
+          "type": "string",
+          "description": "名称"
+        },
+        "floors": {
+          "type": "integer",
+          "description": "楼层数"
+        },
+        "storyHeight": {
+          "type": "number",
+          "description": "层高"
+        },
+        "ages": {
+          "type": "string",
+          "format": "date-time",
+          "description": "建筑年代"
+        },
+        "area": {
+          "type": "number",
+          "description": "建筑面积"
+        },
+        "structure": {
+          "type": "string",
+          "description": "建筑结构"
+        },
+        "purpose": {
+          "type": "string",
+          "description": "建筑用途"
+        },
+        "protection": {
+          "type": "boolean",
+          "description": "是否保护建筑"
+        },
+        "images": {
+          "type": "array",
+          "description": "图片",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "BuildingInfo": {
+      "type": "object",
+      "description": "建筑详细信息",
+      "properties": {
+        "building": {
+          "description": "建筑基础信息",
+          "$ref": "#/definitions/Building"
+        },
+        "regulatoryPlans": {
+          "type": "object",
+          "description": "控规地块信息"
+        },
+        "projectConstruction": {
+          "type": "object",
+          "description": "报建项目信息"
+        }
+      }
+    },
+    "LandArea": {
+      "type": "object",
+      "description": "用地面积信息",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "土地类型名称"
+        },
+        "area": {
+          "type": "number",
+          "description": "土地面积"
+        },
+        "ratio": {
+          "type": "number",
+          "description": "比率，所占比例"
+        }
+      }
+    },
+    "ComprehensivePlan": {
+      "type": "object",
+      "description": "总体规划描述信息",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "总体规划描述信息/基础信息"
+        }
+      }
+    },
+    "TotalRegulatoryPlan": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "description": "一共有多少条数据"
+        },
+        "list": {
+          "type": "array",
+          "description": "返回的数据列表",
+          "items": {
+            "$ref": "#/definitions/RegulatoryPlan"
+          }
+        }
+      }
+    },
+    "TotalRegulatoryPlanCell": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "description": "一共有多少条数据"
+        },
+        "list": {
+          "type": "array",
+          "description": "返回的数据列表",
+          "items": {
+            "$ref": "#/definitions/RegulatoryPlanCell"
+          }
+        }
+      }
+    },
+    "RegulatoryPlanCell": {
+      "type": "object",
+      "description": "控制规划单元数据模型"
+    },
+    "RegulatoryPlan": {
+      "type": "object",
+      "description": "控制规划地块数据模型"
+    },
+    "Account": {
+      "type": "object",
+      "description": "登录使用的账号数据模型",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "账号名称"
+        },
+        "password": {
+          "type": "string",
+          "description": "账号登录密码"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

@@ -1,0 +1,984 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.2",
+    "title": "江苏环监项目API设计",
+    "description": "<string>2019.9.10 15:30</string><br>(1) 修改状态值的表达；",
+    "contact": {
+      "email": "xulei@esrichina.com.cn"
+    }
+  },
+  "host": "www.esrichina.com.cn",
+  "basePath": "/v2",
+  "paths": {
+    "/robotizatio/tasks": {
+      "get": {
+        "summary": "任务相询接口",
+        "description": "结果按创建时间倒序返回结果",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "description": "数据源，当为空时返回所有数据源数据",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "in": "query",
+            "required": false,
+            "description": "任务状态，默认情况下返回非【删除、彻底删除】的数据，回收站时设置为【删除】"
+          },
+          {
+            "name": "offset",
+            "type": "integer",
+            "in": "query",
+            "required": false,
+            "description": "分页相询，从第几条数据返回结果，"
+          },
+          {
+            "name": "size",
+            "type": "integer",
+            "in": "query",
+            "required": false,
+            "description": "分页相询，每页多少条数据，为空或都"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MissionSummary"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "更新任务",
+        "description": "只在【暂停、正常】两个状态之间切换",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MissionSummary"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MissionSummary"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "添加任务",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Mission"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Mission"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/tasks/{id}": {
+      "get": {
+        "summary": "获取任务详情",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "任务编号，任务唯一标识",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Mission"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "删除任务",
+        "description": "一般情况修改任务状态为【删除】<br>如果任务状态已经是【删除】则修改状态为【彻底删除】",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "任务编号，任务唯一标识",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MissionSummary"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/tasks/{id}/downloads": {
+      "get": {
+        "summary": "获取任务下载历史",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "任务编号，任务唯一标识",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "type": "integer",
+            "in": "query",
+            "required": false,
+            "description": "分页相询，返回第几页数据，不传时返回所有数据"
+          },
+          {
+            "name": "size",
+            "type": "integer",
+            "in": "query",
+            "required": false,
+            "description": "分页相询，每页多少条数据，不传时默认10条"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DownloadingSummary"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/downloads": {
+      "get": {
+        "summary": "下载查询接口",
+        "description": "结果按开始时间倒序返回结果",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "description": "数据源，当为空时返回所有数据源数据",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "offset",
+            "type": "integer",
+            "in": "query",
+            "required": false,
+            "description": "分页相询，从第几条数据开始返回"
+          },
+          {
+            "name": "size",
+            "type": "integer",
+            "in": "query",
+            "required": false,
+            "description": "分页相询，每页多少条数据，为空或者小于0时返回offset后面所有数据"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DownloadingSummary"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "取消或重启下载",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DownloadingSummary"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DownloadingSummary"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "添加自定义下载",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Downloading"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Downloading"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/downloads/{id}": {
+      "get": {
+        "summary": "获取下载详情",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "下载编号，下载唯一标识",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Downloading"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "删除下载",
+        "description": "删除下载，并删除下载成果",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "下载编号，下载唯一标识",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MissionSummary"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/extra-users": {
+      "get": {
+        "summary": "查询数据源账号信息",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "description": "数据源",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ExtraUser"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "设置数据源账号信息",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ExtraUser"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ExtraUser"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/extra-users/auth": {
+      "post": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "账号信息验证",
+        "description": "验证填写的账号密码是否可用，<br>后端调用数据源接口验证",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ExtraUser"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/system-options": {
+      "get": {
+        "summary": "获取系统配置数据",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SystemOptions"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "自动下载程序"
+        ],
+        "summary": "更新系统设置",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SystemOptions"
+            }
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SystemOptions"
+            }
+          }
+        }
+      }
+    },
+    "/robotizatio/downloads/field-alternatives": {
+      "get": {
+        "summary": "查询下载参数子段下载项选择值",
+        "description": "结果按开始时间倒序返回结果",
+        "tags": [
+          "自动下载程序"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "description": "数据源",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": true,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Alternatives"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/image-platform/banners": {
+      "get": {
+        "tags": [
+          "影像数据管理平台"
+        ],
+        "summary": "相询Banner",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": false,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Banner"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/image-platform/tags": {
+      "get": {
+        "tags": [
+          "影像数据管理平台"
+        ],
+        "summary": "相询标签",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "type": "string",
+            "in": "header",
+            "required": false,
+            "description": "登录成功后的Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Tag"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SystemOptions": {
+      "type": "object",
+      "description": "系统配制数据，此模型可能会有所变化",
+      "properties": {
+        "downloadStroragePath": {
+          "type": "string",
+          "description": "自动下载结果存储路径"
+        }
+      }
+    },
+    "ExtraUser": {
+      "type": "object",
+      "description": "各数据源里的账户信息",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "账号编号，账号唯一标识"
+        },
+        "name": {
+          "type": "string",
+          "description": "用户名称"
+        },
+        "password": {
+          "type": "string",
+          "description": "用户密码"
+        },
+        "source": {
+          "type": "string",
+          "description": "数据源，"
+        }
+      }
+    },
+    "Alternatives": {
+      "type": "object",
+      "description": "数据源字段参数数据",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "字段名"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValueLabel"
+          }
+        }
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "标签ID，标签唯一标识"
+        },
+        "label": {
+          "type": "string",
+          "description": "标签的文字内容"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tag"
+          }
+        }
+      }
+    },
+    "Banner": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Banner编号，Banner唯一标识"
+        },
+        "action": {
+          "type": "string",
+          "description": "Banner的行为，【NONE,LINK】<br> 为空进只显示，不做任务交互，有URL时跳转到对应页面"
+        },
+        "acttionText": {
+          "type": "string",
+          "description": "跳转按钮文字内容"
+        },
+        "newPage": {
+          "type": "boolean",
+          "description": "跳转到action时，是否打开一个新界面"
+        },
+        "title": {
+          "type": "string",
+          "description": "标题"
+        },
+        "text": {
+          "type": "string",
+          "description": "显示在Banner上的文字"
+        },
+        "picture": {
+          "type": "string",
+          "description": "Banner显示的图片"
+        }
+      }
+    },
+    "Downloading": {
+      "type": "object",
+      "description": "下载信息",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "下载编号，下载唯一编号"
+        },
+        "missionId": {
+          "type": "integer",
+          "description": "关联的任务编号"
+        },
+        "title": {
+          "type": "string",
+          "description": "下载的标题，如“任务标题+时间”，“自定义下载+数据源名称+时间”"
+        },
+        "startingTime": {
+          "type": "string",
+          "format": "date-teim",
+          "description": "下载开始时间"
+        },
+        "endingTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "下载结束时间"
+        },
+        "status": {
+          "type": "string",
+          "description": "下载状态【下载中，下载成功，下载失败，下载被取消，没有资源】【downloading,succeed，failed，canceled，no-resource】"
+        },
+        "parameters": {
+          "type": "array",
+          "description": "与下载有关的参数",
+          "items": {
+            "$ref": "#/definitions/FieldValueText"
+          }
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "创建时间，当下载是用户自定义添加时此字段有值"
+        },
+        "creator": {
+          "type": "string",
+          "description": "创建者名称，当下载是用户自定义添加时此字段有值"
+        }
+      }
+    },
+    "DownloadingSummary": {
+      "type": "object",
+      "description": "下载信息",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "下载编号，下载唯一编号"
+        },
+        "missionId": {
+          "type": "integer",
+          "description": "关联的任务编号"
+        },
+        "title": {
+          "type": "string",
+          "description": "下载的标题，如“任务标题+时间”，“自定义下载+数据源名称+时间”"
+        },
+        "startingTime": {
+          "type": "string",
+          "format": "date-teim",
+          "description": "下载开始时间"
+        },
+        "endingTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "下载结束时间"
+        },
+        "status": {
+          "type": "string",
+          "description": "下载状态【下载中，下载成功，下载失败，下载被取消，没有可下载的资源】【DOWNLOADING ,SUCCEED，FAILED ，CANCELED ，NO_RESOURCE】"
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "创建时间，当下载是用户自定义添加时此字段有值"
+        },
+        "creator": {
+          "type": "string",
+          "description": "创建者名称，当下载是用户自定义添加时此字段有值"
+        }
+      }
+    },
+    "Mission": {
+      "type": "object",
+      "description": "任务信息，任务模型，当属性值为空时，在前端界面上不显示",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "任务编号，任务唯一标识"
+        },
+        "name": {
+          "type": "string",
+          "description": "任务名称"
+        },
+        "source": {
+          "type": "string",
+          "description": "数据源类型，从什么卫星上获取的数据"
+        },
+        "status": {
+          "type": "string",
+          "description": "状态，任务状态，，【NORMAL,PAUSED,DELETED,FOREVER_DELETED】【正常，暂停，删除，彻底删除】"
+        },
+        "startingTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "任务起始时间"
+        },
+        "frequency": {
+          "type": "number",
+          "description": "更新频率"
+        },
+        "frequencyUnit": {
+          "type": "string",
+          "description": "更新频率单位【年，月，天，时】【YEAR,MONTH,DAY,HOUR】"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FieldValueText"
+          }
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "任务创建时间"
+        },
+        "creator": {
+          "type": "string",
+          "description": "创建者名称"
+        }
+      }
+    },
+    "MissionSummary": {
+      "type": "object",
+      "description": "任务概要信息，主要用于列表展示",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "任务编号，任务唯一标识"
+        },
+        "name": {
+          "type": "string",
+          "description": "任务名称"
+        },
+        "source": {
+          "type": "string",
+          "description": "数据源类型，从什么卫星上获取的数据"
+        },
+        "status": {
+          "type": "string",
+          "description": "状态，任务状态，【NORMAL,PAUSED,DELETED,FOREVER_DELETED】【正常，暂停，删除，彻底删除】"
+        },
+        "descriptions": {
+          "type": "string",
+          "description": "任务描述，任务的一些配置参数组成的任务描述"
+        },
+        "lastDownloadTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "任务最后一次下载时间"
+        },
+        "lastDownloadStatus": {
+          "type": "string",
+          "description": "最后一次下载状态【DOWNLOADING ,SUCCEED，FAILED ，CANCELED ，NO_RESOURCE】【下载中，成功，失败，被取消，没有资源】"
+        },
+        "createTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "任务创建时间"
+        },
+        "creator": {
+          "type": "string",
+          "description": "创建者名称"
+        }
+      }
+    },
+    "ValueLabel": {
+      "type": "object",
+      "description": "参数类型数据模型，键值对数据",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "健，一般存储使用些字段的值"
+        },
+        "label": {
+          "type": "string",
+          "description": "值，一般界面表现使用些字段的值"
+        }
+      }
+    },
+    "FieldValueText": {
+      "type": "object",
+      "description": "字符串类型字段值数据模型，包括字段名称，字段别名，字段值",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "字段名称"
+        },
+        "alias": {
+          "type": "string",
+          "description": "字段别名"
+        },
+        "value": {
+          "type": "string",
+          "description": "字段值"
+        }
+      }
+    }
+  }
+}
